@@ -1,13 +1,33 @@
-import pandas as pd
+name: Multiply Workflow
 
-def multiply_ten_by_ten():
-    results = [10 * 10 for _ in range(10)]
-    return results
+on:
+  push:
+    branches:
+      - main
 
-def save_results_to_excel(results):
-    df = pd.DataFrame(results, columns=["Result"])
-    df.to_excel("results.xlsx", index=False)
+jobs:
+  multiply:
+    runs-on: ubuntu-latest
 
-if __name__ == "__main__":
-    results = multiply_ten_by_ten()
-    save_results_to_excel(results)
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run multiplication script
+      run: python multiply.py
+
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: multiplication-results
+        path: results.xlsx
